@@ -45,11 +45,11 @@ func (d *outputsDataSource) Schema(_ context.Context, _ datasource.SchemaRequest
 	resp.Schema = schema.Schema{
 		Description: "Root outputs of another workspace (tfe_outputs). Needs an infra:admin key; reads are audited.",
 		Attributes: map[string]schema.Attribute{
-			"id":                  schema.StringAttribute{Computed: true},
+			"id":                  schema.StringAttribute{Computed: true, Description: "The workspace id."},
 			"organization":        schema.StringAttribute{Optional: true, Description: "Accepted for tfe compatibility and ignored."},
 			"workspace":           schema.StringAttribute{Required: true, Description: "Workspace name."},
-			"values":              schema.DynamicAttribute{Computed: true, Sensitive: true},
-			"nonsensitive_values": schema.DynamicAttribute{Computed: true},
+			"values":              schema.DynamicAttribute{Computed: true, Sensitive: true, Description: "Every output, sensitive ones included."},
+			"nonsensitive_values": schema.DynamicAttribute{Computed: true, Description: "Only the outputs not marked sensitive."},
 		},
 	}
 }
@@ -197,12 +197,12 @@ func (d *workspaceDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 	resp.Schema = schema.Schema{
 		Description: "Looks up a workspace by name (tfe_workspace).",
 		Attributes: map[string]schema.Attribute{
-			"id":                schema.StringAttribute{Computed: true},
-			"name":              schema.StringAttribute{Required: true},
+			"id":                schema.StringAttribute{Computed: true, Description: "The workspace id."},
+			"name":              schema.StringAttribute{Required: true, Description: "Workspace name."},
 			"organization":      schema.StringAttribute{Optional: true, Description: "Accepted for tfe compatibility and ignored."},
-			"auto_apply":        schema.BoolAttribute{Computed: true},
-			"working_directory": schema.StringAttribute{Computed: true},
-			"terraform_version": schema.StringAttribute{Computed: true},
+			"auto_apply":        schema.BoolAttribute{Computed: true, Description: "Whether plans apply without a confirmation."},
+			"working_directory": schema.StringAttribute{Computed: true, Description: "Directory in the repository that runs execute in."},
+			"terraform_version": schema.StringAttribute{Computed: true, Description: "The workspace's OpenTofu version."},
 		},
 	}
 }
@@ -254,17 +254,17 @@ func (d *variablesDataSource) Metadata(_ context.Context, req datasource.Metadat
 }
 
 func (d *variablesDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	list := func() schema.ListAttribute {
-		return schema.ListAttribute{Computed: true, ElementType: types.ObjectType{AttrTypes: variableObjectType}}
+	list := func(desc string) schema.ListAttribute {
+		return schema.ListAttribute{Computed: true, Description: desc, ElementType: types.ObjectType{AttrTypes: variableObjectType}}
 	}
 	resp.Schema = schema.Schema{
 		Description: "A workspace's variables (tfe_variables). Sensitive values are empty.",
 		Attributes: map[string]schema.Attribute{
-			"id":           schema.StringAttribute{Computed: true},
-			"workspace_id": schema.StringAttribute{Required: true},
-			"variables":    list(),
-			"terraform":    list(),
-			"env":          list(),
+			"id":           schema.StringAttribute{Computed: true, Description: "The workspace id."},
+			"workspace_id": schema.StringAttribute{Required: true, Description: "The workspace to read."},
+			"variables":    list("Every variable."),
+			"terraform":    list("Input variables only."),
+			"env":          list("Environment variables only."),
 		},
 	}
 }
@@ -349,9 +349,9 @@ func (d *githubInstallationDataSource) Schema(_ context.Context, _ datasource.Sc
 	resp.Schema = schema.Schema{
 		Description: "The organization's DevOpser GitHub App installation, by GitHub account (tfe_github_app_installation).",
 		Attributes: map[string]schema.Attribute{
-			"id":              schema.StringAttribute{Computed: true},
+			"id":              schema.StringAttribute{Computed: true, Description: "The installation id, as a string."},
 			"name":            schema.StringAttribute{Required: true, Description: "GitHub account (owner) name."},
-			"installation_id": schema.Int64Attribute{Computed: true},
+			"installation_id": schema.Int64Attribute{Computed: true, Description: "The GitHub App installation id."},
 		},
 	}
 }

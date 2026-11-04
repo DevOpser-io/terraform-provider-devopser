@@ -39,12 +39,13 @@ func (r *workspaceSettingsResource) Schema(_ context.Context, _ resource.SchemaR
 	resp.Schema = schema.Schema{
 		Description: "Settings of an existing workspace (tfe_workspace_settings).",
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{Computed: true,
+			"id": schema.StringAttribute{Computed: true, Description: "The workspace id.",
 				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}},
-			"workspace_id": schema.StringAttribute{Required: true,
+			"workspace_id": schema.StringAttribute{Required: true, Description: "The workspace these settings belong to.",
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()}},
 			"global_remote_state": schema.BoolAttribute{Optional: true, Computed: true,
-				Default: booldefault.StaticBool(false)},
+				Description: "Let every workspace in the organization read this workspace's outputs. Reset to false on destroy.",
+				Default:     booldefault.StaticBool(false)},
 		},
 	}
 }
