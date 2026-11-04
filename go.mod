@@ -2,10 +2,8 @@ module github.com/DevOpser-io/terraform-provider-devopser
 
 go 1.25.0
 
-replace github.com/DevOpser-io/devopser-go => ../devopser-go
-
 require (
-	github.com/DevOpser-io/devopser-go v0.0.0
+	github.com/DevOpser-io/devopser-go v0.1.0
 	github.com/hashicorp/terraform-plugin-framework v1.19.0
 	github.com/hashicorp/terraform-plugin-framework-validators v0.19.0
 )
